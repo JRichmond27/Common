@@ -81,7 +81,6 @@ Namespace DDL
             ddlControl.DataSource = objTable
             ddlControl.DataTextField = "Text"
             ddlControl.DataValueField = "Value"
-            'ddlControl.DataBind()
 
             'add a "select all" option
             If blnAll Then

@@ -74,22 +74,43 @@ Namespace DDL
 
             'execute the query
             objAdapter.Fill(objTable)
-            'objReader = cmdGet.ExecuteReader()
             objConn.Close()
 
             'add each of the records to the ddl
             ddlControl.DataSource = objTable
             ddlControl.DataTextField = "Text"
             ddlControl.DataValueField = "Value"
+            ddlControl.DataBind()
 
             'add a "select all" option
             If blnAll Then
-                DDLInsert_All(ddlControl, strCustomAllText)
+                Dim objItem As New ListItem(strCustomAllText, 0)
+                ddlControl.Items.Insert(0, objItem)
+
+                'TODO: figure out why this call doesn't work
+                'DDLInsert_All(ddlControl, strCustomAllText)
             End If
 
             'add a "select an item" option
             If blnSelect Then
-                DDLInsert_SelectItem(ddlControl, strCustomSelText, blnShortSelect)
+                Dim objItem As ListItem
+
+                'create the item
+                If strCustomSelText = "" Then
+                    If blnShortSelect Then
+                        objItem = New ListItem("--", "-1")
+                    Else
+                        objItem = New ListItem("[Select an Item]", "-1")
+                    End If
+                Else
+                    objItem = New ListItem(strCustomSelText, "-1")
+                End If
+
+                'add the item
+                ddlControl.Items.Insert(0, objItem)
+
+                'TODO: figure out why this call doesn't work
+                'DDLInsert_SelectItem(ddlControl, strCustomSelText, blnShortSelect)
             End If
 
             'select the first item

@@ -107,15 +107,18 @@ Namespace Email
         ''' <param name="strFromDisplay">The name that should be displayed instead of the from address</param>
         ''' <param name="strCC">A comma or semi-colon separated list of email addresses to CC the email to</param>
         ''' <param name="strBCC">A comma or semi-colon separated list of email addresses to BCC the email to</param>
+        ''' <param name="strReplyTo">A comma or semi-colon separated list of email addresses to include as the reply to addresses</param>
         ''' <returns>A return status object indicating if the email was successful or not</returns>
         Public Function SendMail(ByVal strSendTo As String, ByVal strSendFrom As String, _
             ByVal strSubject As String, ByVal strBody As String, _
             Optional ByVal blnHTML As Boolean = True, Optional ByVal strFromDisplay As String = "", _
-            Optional ByVal strCC As String = "", Optional ByVal strBCC As String = "") As RetStatus
+            Optional ByVal strCC As String = "", Optional ByVal strBCC As String = "", _
+            Optional ByVal strReplyTo As String = "") As RetStatus
             ' *****************************************************************************
             ' Author:       Jeff Richmond
             ' Create date:  2010.11.15
             ' Description:  Sends an email through the SMTP server specified in the web.config
+            ' Modified:     2012.10.30 by JR - Added reply to address parameter
             ' *****************************************************************************
             SendMail = RetStatus.Fail
 
@@ -132,6 +135,7 @@ Namespace Email
             SplitEmailAddresses(mmMessage.To, strSendTo)
             SplitEmailAddresses(mmMessage.CC, strCC)
             SplitEmailAddresses(mmMessage.Bcc, strBCC)
+            SplitEmailAddresses(mmMessage.ReplyToList, strReplyTo)
 
             'Add from address, subject adn body
             mmMessage.From = maFromAddr
@@ -165,19 +169,22 @@ Namespace Email
         ''' <param name="strFromDisplay">The name that should be displayed instead of the from address</param>
         ''' <param name="strCC">A comma or semi-colon separated list of email addresses to CC the email to</param>
         ''' <param name="strBCC">A comma or semi-colon separated list of email addresses to BCC the email to</param>
+        ''' <param name="strReplyTo">A comma or semi-colon separated list of email addresses to include as the reply to addresses</param>
         ''' <returns>A return status object indicating if the new thread was created succesfully or not</returns>
         Public Function SendMail_BG(ByVal strSendTo As String, ByVal strSendFrom As String, _
             ByVal strSubject As String, ByVal strBody As String, _
             Optional ByVal blnHTML As Boolean = True, Optional ByVal strFromDisplay As String = "", _
-            Optional ByVal strCC As String = "", Optional ByVal strBCC As String = "") As RetStatus
+            Optional ByVal strCC As String = "", Optional ByVal strBCC As String = "", _
+            Optional ByVal strReplyTo As String = "") As RetStatus
             ' *****************************************************************************
             ' Author:       Jeff Richmond
             ' Create date:  2010.11.15
             ' Description:  Sends an email through the SMTP server specified in the web.config
+            ' Modified:     2012.10.30 by JR - Added reply to address parameter
             ' *****************************************************************************
             SendMail_BG = RetStatus.Fail
 
-            Threading.Tasks.Task.Factory.StartNew(Function() SendMail(strSendTo, strSendFrom, strSubject, strBody, blnHTML, strFromDisplay, strCC, strBCC))
+            Threading.Tasks.Task.Factory.StartNew(Function() SendMail(strSendTo, strSendFrom, strSubject, strBody, blnHTML, strFromDisplay, strCC, strBCC, strReplyTo))
 
             SendMail_BG = RetStatus.Pass
         End Function
